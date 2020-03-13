@@ -6,76 +6,16 @@
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="./resources/ol.css">
-        <link rel="stylesheet" href="resources/fontawesome-all.min.css">
-        <link rel="stylesheet" type="text/css" href="resources/horsey.min.css">
-        <link rel="stylesheet" type="text/css" href="resources/ol3-search-layer.min.css">
-        <link rel="stylesheet" href="./resources/ol3-layerswitcher.css">
-        <link rel="stylesheet" href="./resources/qgis2web.css">
-        <style>
-        .ol-geocoder.gcd-gl-container {
-            top: 65px!important;
-            left: .5em!important;
-            width: 2.1em!important;
-            height: 2.1em!important;
-        }
-        .ol-geocoder .gcd-gl-container{
-            width: 2.1em!important;
-            height: 2.1em!important;
-        }
-        .ol-geocoder .gcd-gl-control{
-            width: 2.1em!important;
-        }
-        .ol-geocoder .gcd-gl-expanded {
-            width: 15.625em!important;
-            height: 2.1875em;
-        }
-        .ol-touch .ol-geocoder.gcd-gl-container{
-            top: 80px!important;
-        }
-        .ol-geocoder .gcd-gl-btn {
-            width: 1.375em!important;
-            height: 1.375em!important;
-            top: .225em!important;
-            background-image: none!important;
-        }
-        </style>
-<style>
-.search-layer {
-  top: 100px;
-  left: .5em;
-}
-.ol-touch .search-layer {
-  top: 130px;
-}
-</style>
-        <style>
-        html, body {
-            background-color: #ffffff;
-        }
-        .ol-control button {
-            background-color: #f8f8f8 !important;
-            color: #000000 !important;
-            border-radius: 0px !important;
-        }
-        .ol-zoom, .geolocate, .gcd-gl-control .ol-control {
-            background-color: rgba(255,255,255,.4) !important;
-            padding: 3px !important;
-        }
-        .ol-scale-line {
-            background: none !important;
-        }
-        .ol-scale-line-inner {
-            border: 2px solid #f8f8f8 !important;
-            border-top: none !important;
-            background: rgba(255, 255, 255, 0.5) !important;
-            color: black !important;
-        }
-        </style>
-        <link href="resources/ol3-geocoder.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         #map {
-            width: 1289px;
+            width: 1357px;
             height: 848px;
         }
         </style>
@@ -83,24 +23,653 @@
     </head>
     <body>
         <div id="map">
-            <div id="popup" class="ol-popup">
-                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                <div id="popup-content"></div>
-            </div>
         </div>
-        <script src="resources/qgis2web_expressions.js"></script>
-        <script src="resources/polyfills.js"></script>
-        <script src="./resources/functions.js"></script>
-        <script src="./resources/ol.js"></script>
-        <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=Element.prototype.classList,URL"></script>
-        <script src="resources/horsey.min.js"></script>
-        <script src="resources/ol3-search-layer.min.js"></script>
-        <script src="./resources/ol3-layerswitcher.js"></script>
-        <script src="resources/ol3-geocoder.js"></script>
-        <script src="layers/communes20200101_0.js"></script>
-        <script src="styles/communes20200101_0_style.js"></script>
-        <script src="./layers/layers.js" type="text/javascript"></script> 
-        <script src="./resources/qgis2web.js"></script>
-        <script src="./resources/Autolinker.min.js"></script>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/communes20200101_0.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:10, minZoom:1
+        }).fitBounds([[48.65544669090871,0.7200710030599695],[52.03720027822306,6.13647302529513]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_communes20200101_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['insee'] !== null ? Autolinker.link(feature.properties['insee'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nom'] !== null ? Autolinker.link(feature.properties['nom'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['wikipedia'] !== null ? Autolinker.link(feature.properties['wikipedia'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['surf_ha'] !== null ? Autolinker.link(feature.properties['surf_ha'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_Foyers'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_Foyers'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_Popul'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_Popul'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_�dition (bureau)'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_�dition (bureau)'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_Edition'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_Edition'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_Nom_edition'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_Nom_edition'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_port'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_port'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_diff'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_diff'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_CODEP'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_CODEP'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_DEPOSITAIRE'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_DEPOSITAIRE'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_CP'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_CP'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['correspondance_cp_edition_COMMUNE - 1er d�cembre 2019'] !== null ? Autolinker.link(feature.properties['correspondance_cp_edition_COMMUNE - 1er d�cembre 2019'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_communes20200101_0_0(feature) {
+            switch(String(feature.properties['correspondance_cp_edition_Nom_edition'])) {
+                case 'ARMENTI�RES':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,118,73,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'ARRAGEOIS-TERNOIS':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(93,237,98,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'BOULOGNE':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(93,219,133,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'B�THUNE-BRUAY':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,237,184,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'CALAIS':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(47,203,234,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'CAMBRAI':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,216,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DOUAI':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(210,193,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'DUNKERQUE':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,223,92,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'HAZEBROUCK':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,99,237,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'LENS-HENIN':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(114,180,237,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'LILLE':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(216,143,25,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'LOOS-HAUBOURDIN-LES WEPPES':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(112,109,207,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MARCQ-LA MADELEINE-LOMME-LAMBERSART':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,115,188,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MONTREUIL':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(146,42,215,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'ROUBAIX':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(113,70,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SAINT-OMER':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(132,230,19,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SAMBRE-AVESNOIS':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(213,15,12,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'TOURCOING-LYS':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(24,78,238,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'VALENCIENNES-DENAIN':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(79,235,27,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'VILLENEUVE-PEV�LE-LE M�LANTOIS':
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(204,71,107,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_communes20200101_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(210,45,136,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_communes20200101_0');
+        map.getPane('pane_communes20200101_0').style.zIndex = 400;
+        map.getPane('pane_communes20200101_0').style['mix-blend-mode'] = 'normal';
+        var layer_communes20200101_0 = new L.geoJson(json_communes20200101_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_communes20200101_0',
+            layerName: 'layer_communes20200101_0',
+            pane: 'pane_communes20200101_0',
+            onEachFeature: pop_communes20200101_0,
+            style: style_communes20200101_0_0,
+        });
+        bounds_group.addLayer(layer_communes20200101_0);
+        map.addLayer(layer_communes20200101_0);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'communes-20200101<br /><table><tr><td style="text-align: center;"><img src="legend/communes20200101_0_ARMENTIRES0.png" /></td><td>ARMENTI�RES</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_ARRAGEOISTERNOIS1.png" /></td><td>ARRAGEOIS-TERNOIS</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_BOULOGNE2.png" /></td><td>BOULOGNE</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_BTHUNEBRUAY3.png" /></td><td>B�THUNE-BRUAY</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_CALAIS4.png" /></td><td>CALAIS</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_CAMBRAI5.png" /></td><td>CAMBRAI</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_DOUAI6.png" /></td><td>DOUAI</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_DUNKERQUE7.png" /></td><td>DUNKERQUE</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_HAZEBROUCK8.png" /></td><td>HAZEBROUCK</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_LENSHENIN9.png" /></td><td>LENS-HENIN</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_LILLE10.png" /></td><td>LILLE</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_LOOSHAUBOURDINLESWEPPES11.png" /></td><td>LOOS-HAUBOURDIN-LES WEPPES</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_MARCQLAMADELEINELOMMELAMBERSART12.png" /></td><td>MARCQ-LA MADELEINE-LOMME-LAMBERSART</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_MONTREUIL13.png" /></td><td>MONTREUIL</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_ROUBAIX14.png" /></td><td>ROUBAIX</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_SAINTOMER15.png" /></td><td>SAINT-OMER</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_SAMBREAVESNOIS16.png" /></td><td>SAMBRE-AVESNOIS</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_TOURCOINGLYS17.png" /></td><td>TOURCOING-LYS</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_VALENCIENNESDENAIN18.png" /></td><td>VALENCIENNES-DENAIN</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_VILLENEUVEPEVLELEMLANTOIS19.png" /></td><td>VILLENEUVE-PEV�LE-LE M�LANTOIS</td></tr><tr><td style="text-align: center;"><img src="legend/communes20200101_0_20.png" /></td><td></td></tr></table>': layer_communes20200101_0,}).addTo(map);
+        map.on("zoomend", function(){
+
+                if (map.hasLayer(layer_communes20200101_0)) {
+                    if (map.getZoom() <= 11 && map.getZoom() >= 19) {
+                        layer_communes20200101_0.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_communes20200101_0.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        setBounds();
+        var i = 0;
+        layer_communes20200101_0.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['nom'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['nom']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_communes20200101_0'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+                if (map.hasLayer(layer_communes20200101_0)) {
+                    if (map.getZoom() <= 11 && map.getZoom() >= 19) {
+                        layer_communes20200101_0.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_communes20200101_0.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        map.addControl(new L.Control.Search({
+            layer: layer_communes20200101_0,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'correspondance_cp_edition_Nom_edition'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"correspondance_cp_edition_Nom_edition": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + key).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_correspondance_cp_edition_Nom_edition = document.createElement('div');
+            div_correspondance_cp_edition_Nom_edition.id = "div_correspondance_cp_edition_Nom_edition";
+            div_correspondance_cp_edition_Nom_edition.className= "filterselect";
+            document.getElementById("menu").appendChild(div_correspondance_cp_edition_Nom_edition);
+            sel_correspondance_cp_edition_Nom_edition = document.createElement('select');
+            sel_correspondance_cp_edition_Nom_edition.multiple = true;
+            sel_correspondance_cp_edition_Nom_edition.size = 10;
+            sel_correspondance_cp_edition_Nom_edition.id = "sel_correspondance_cp_edition_Nom_edition";
+            var correspondance_cp_edition_Nom_edition_options_str = "<option value='' unselected></option>";
+            sel_correspondance_cp_edition_Nom_edition.onchange = function(){filterFunc()};
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="ARMENTI�RES">ARMENTI�RES</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="ARRAGEOIS-TERNOIS">ARRAGEOIS-TERNOIS</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="BOULOGNE">BOULOGNE</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="B�THUNE-BRUAY">B�THUNE-BRUAY</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="CALAIS">CALAIS</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="CAMBRAI">CAMBRAI</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="DOUAI">DOUAI</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="DUNKERQUE">DUNKERQUE</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="HAZEBROUCK">HAZEBROUCK</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="LENS-HENIN">LENS-HENIN</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="LILLE">LILLE</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="LOOS-HAUBOURDIN-LES WEPPES">LOOS-HAUBOURDIN-LES WEPPES</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="MARCQ-LA MADELEINE-LOMME-LAMBERSART">MARCQ-LA MADELEINE-LOMME-LAMBERSART</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="MONTREUIL">MONTREUIL</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="ROUBAIX">ROUBAIX</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="SAINT-OMER">SAINT-OMER</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="SAMBRE-AVESNOIS">SAMBRE-AVESNOIS</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="TOURCOING-LYS">TOURCOING-LYS</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="VALENCIENNES-DENAIN">VALENCIENNES-DENAIN</option>';
+            correspondance_cp_edition_Nom_edition_options_str  += '<option value="VILLENEUVE-PEV�LE-LE M�LANTOIS">VILLENEUVE-PEV�LE-LE M�LANTOIS</option>';
+            sel_correspondance_cp_edition_Nom_edition.innerHTML = correspondance_cp_edition_Nom_edition_options_str;
+            div_correspondance_cp_edition_Nom_edition.appendChild(sel_correspondance_cp_edition_Nom_edition);
+            var lab_correspondance_cp_edition_Nom_edition = document.createElement('div');
+            lab_correspondance_cp_edition_Nom_edition.innerHTML = 'correspondance_cp_edition_Nom_edition';
+            lab_correspondance_cp_edition_Nom_edition.className = 'filterlabel';
+            div_correspondance_cp_edition_Nom_edition.appendChild(lab_correspondance_cp_edition_Nom_edition);
+            var reset_correspondance_cp_edition_Nom_edition = document.createElement('div');
+            reset_correspondance_cp_edition_Nom_edition.innerHTML = 'clear filter';
+            reset_correspondance_cp_edition_Nom_edition.className = 'filterlabel';
+            reset_correspondance_cp_edition_Nom_edition.onclick = function() {
+                var options = document.getElementById("sel_correspondance_cp_edition_Nom_edition").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_correspondance_cp_edition_Nom_edition.appendChild(reset_correspondance_cp_edition_Nom_edition);
+        resetLabels([layer_communes20200101_0]);
+        map.on("zoomend", function(){
+            resetLabels([layer_communes20200101_0]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_communes20200101_0]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_communes20200101_0]);
+        });
+        </script>
     </body>
 </html>
